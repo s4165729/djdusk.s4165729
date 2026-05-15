@@ -6,10 +6,24 @@
   <title>DJ DUSK — Memory</title>
 
   <!--
-    DJ DUSK — Music video page of a fictional techno DJ, for Interactive Media Assignment 2 
- Deep red (#b81c0a) and dark background creates a late-night club atmosphere.
+    DJ DUSK — Music Video Website | Interactive Media A2
+    RMIT University 2026
 
-  <!-- Google Fonts: three typefaces for different fonts, for a sense of design and varitey -->
+    CONTEXT: Music video page for a fictional techno DJ.
+    The video fills the whole screen as the main feature.
+
+    DESIGN: Deep red (#b81c0a) matches the stage lighting in the photo.
+    CSS variables store colours so the whole theme updates in one place.
+
+    FEATURES ADDED BEYOND BASIC PLAY/PAUSE:
+    - Mute/unmute toggle with icon swap
+    - Volume slider
+    - Fullscreen button
+    - Seek bar with live time display
+    - Toast messages confirming each action
+    - Share modal with social links and copy button
+  -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
@@ -17,14 +31,9 @@
   <style>
 
     /* CSS reset — removes default browser spacing */
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* CSS variables — store the colour theme in one place.
-       Changing --red here updates every red element on the page. */
+    /* CSS variables — change --red here to retheme the whole page */
     :root {
       --red:          #b81c0a;
       --bg:           #060608;
@@ -45,8 +54,7 @@
       overflow-x: hidden;
     }
 
-    /* ── VIDEO SECTION ───────────────────────────────────────── */
-
+    /* ── VIDEO SECTION ── */
 
     #video-section {
       position: relative;
@@ -56,7 +64,6 @@
       background: #000;
     }
 
-    /* YouTube iframe  */
     #yt-wrapper {
       position: absolute;
       inset: 0;
@@ -65,13 +72,9 @@
       z-index: 0;
     }
 
-    #yt-player {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+    #yt-player { width: 100%; height: 100%; border: none; }
 
-    /* Vignette — darkens the edges */
+    /* Vignette — darkens edges so white text stays readable */
     #vignette {
       position: absolute;
       inset: 0;
@@ -79,11 +82,11 @@
       pointer-events: none;
       background:
         radial-gradient(ellipse 85% 75% at 50% 45%, transparent 20%, rgba(184,28,10,0.05) 60%, rgba(6,6,8,0.72) 100%),
-        linear-gradient(to top,   rgba(6,6,8,0.96) 0%, transparent 45%),
+        linear-gradient(to top,    rgba(6,6,8,0.96) 0%, transparent 45%),
         linear-gradient(to bottom, rgba(6,6,8,0.52) 0%, transparent 25%);
     }
 
-    /* floating red particle animation */
+    /* Canvas for floating red dot animation */
     #particle-canvas {
       position: absolute;
       inset: 0;
@@ -92,28 +95,21 @@
       opacity: 0.45;
     }
 
-    /* ── TOP BAR*/
+    /* ── TOP BAR ── */
 
     #top-bar {
       position: absolute;
       top: 0; left: 0; right: 0;
       z-index: 10;
       padding: 24px 32px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
     }
 
-    /* Chrome silver effect  */
     .wordmark {
       font-family: var(--font-display);
       font-size: clamp(38px, 5.5vw, 64px);
       letter-spacing: 0.08em;
       line-height: 1;
-      background: linear-gradient(135deg, #b8b8b8 0%, #fff 18%, #909090 32%, #e0e0e0 48%, #707070 62%, #ebebeb 78%, #aaa 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #fff;
     }
 
     .wordmark-sub {
@@ -125,7 +121,7 @@
       margin-top: 6px;
     }
 
-    /* ── TRACK IDENTITY  */
+    /* ── TRACK IDENTITY ── */
 
     #track-identity {
       position: absolute;
@@ -149,7 +145,7 @@
       font-size: clamp(52px, 9vw, 100px);
       letter-spacing: 0.03em;
       line-height: 0.88;
-      color: var(--text);
+      color: #fff;
       text-shadow: 0 4px 40px rgba(0,0,0,0.8);
       margin-bottom: 14px;
     }
@@ -176,7 +172,7 @@
       font-weight: 300;
     }
 
-    /* ── CONTROLS */
+    /* ── CONTROLS ── */
 
     #controls-panel {
       position: absolute;
@@ -185,7 +181,7 @@
       padding: 10px 32px 28px;
     }
 
-    /* Seek bar — for video and sound, to control where it goes,  Red fill is set by JavaScript. */
+    /* Seek bar — range input styled with red fill (set by JS) */
     #seek-bar {
       -webkit-appearance: none;
       appearance: none;
@@ -207,10 +203,10 @@
       cursor: pointer;
     }
 
-    .ctrl-row   { display: flex; align-items: center; }
-    .ctrl-l     { display: flex; align-items: center; gap: 8px; flex: 1; }
-    .ctrl-m     { display: flex; align-items: center; gap: 14px; justify-content: center; flex: 1; }
-    .ctrl-r     { display: flex; align-items: center; gap: 10px; justify-content: flex-end; flex: 1; }
+    .ctrl-row { display: flex; align-items: center; }
+    .ctrl-l   { display: flex; align-items: center; gap: 8px; flex: 1; }
+    .ctrl-m   { display: flex; align-items: center; gap: 14px; justify-content: center; flex: 1; }
+    .ctrl-r   { display: flex; align-items: center; gap: 10px; justify-content: flex-end; flex: 1; }
 
     .ctrl-btn {
       background: none;
@@ -225,9 +221,9 @@
       transition: color 0.18s, background 0.15s;
     }
 
-    .ctrl-btn:hover { color: var(--text); background: rgba(255,255,255,0.07); }
+    .ctrl-btn:hover  { color: var(--text); background: rgba(255,255,255,0.07); }
 
-    /* Play button — larger and red so it stands out as the main control */
+    /* Play button — larger and red, the most important control */
     #btn-play {
       width: 52px;
       height: 52px;
@@ -269,14 +265,40 @@
       cursor: pointer;
     }
 
-    /* Volume-off icon hidden by default — JS swaps them on mute */
+    /* Volume-off icon hidden by default — swapped by JS on mute */
     #icon-volume-off { display: none; }
 
-    /* ── TOAST ─ small feedback when click on people know what is happen for when 
-    people click on the play or pause button this allows then to know what to do next or 
-    what is happening - also for the youtube video as i had alot of hard time connecting the 
-    buttons with the youtube video */
+    /* ── SHARE BUTTON UNDER VIDEO ── */
 
+    #share-under-video {
+      position: absolute;
+      bottom: 90px;
+      right: 32px;
+      z-index: 10;
+    }
+
+    #btn-share-video {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 3px;
+      background: rgba(184,28,10,0.15);
+      border: 1px solid rgba(184,28,10,0.5);
+      cursor: pointer;
+      color: #fff;
+      font-family: var(--font-ui);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: background 0.2s;
+    }
+
+    #btn-share-video:hover { background: rgba(184,28,10,0.35); }
+
+    /* ── TOAST ── */
+
+    /* The .show class triggers the fade-in CSS transition */
     #toast {
       position: fixed;
       bottom: 88px;
@@ -298,31 +320,20 @@
       white-space: nowrap;
     }
 
-    #toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* ── ARTIST SECTION ──────────────────────────────────────── */
+    /* ── ARTIST SECTION ── */
 
-    #artist-section {
-      background: var(--bg2);
-      position: relative;
-      z-index: 5;
-    }
+    #artist-section { background: var(--bg2); position: relative; z-index: 5; }
 
     .red-divider {
       height: 2px;
       background: linear-gradient(to right, transparent, #b81c0a, transparent);
     }
 
-    .artist-wrap {
-      max-width: 1060px;
-      margin: 0 auto;
-      padding: 80px 32px 72px;
-    }
+    .artist-wrap { max-width: 1060px; margin: 0 auto; padding: 80px 32px 72px; }
 
-    .artist-header  { margin-bottom: 52px; }
+    .artist-header { margin-bottom: 52px; }
 
     .artist-eyebrow {
       font-family: var(--font-ui);
@@ -333,18 +344,15 @@
       margin-bottom: 12px;
     }
 
-    /* Same chrome silver gradient technique */
     .artist-heading {
       font-family: var(--font-display);
       font-size: clamp(64px, 11vw, 130px);
       letter-spacing: 0.05em;
       line-height: 0.88;
-      background: linear-gradient(160deg, #c0c0c0 0%, #f8f8f8 15%, #888 28%, #e4e4e4 42%, #606060 55%, #f0f0f0 68%, #a0a0a0 80%, #fff 90%, #b0b0b0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #fff;
     }
 
+    /* Bio grid — text left, photo right */
     .artist-bio-grid {
       display: grid;
       grid-template-columns: 1fr 200px;
@@ -353,9 +361,7 @@
       margin-bottom: 60px;
     }
 
-    @media (max-width: 760px) {
-      .artist-bio-grid { grid-template-columns: 1fr; gap: 24px; }
-    }
+    @media (max-width: 760px) { .artist-bio-grid { grid-template-columns: 1fr; gap: 24px; } }
 
     .artist-photo-wrap { position: relative; }
 
@@ -382,13 +388,7 @@
 
     .artist-text-col { display: flex; flex-direction: column; gap: 18px; padding-top: 6px; }
 
-    .bio-p {
-      font-size: 15px;
-      line-height: 1.9;
-      color: rgba(242,237,232,0.62);
-      font-weight: 300;
-    }
-
+    .bio-p { font-size: 15px; line-height: 1.9; color: rgba(242,237,232,0.62); font-weight: 300; }
     .bio-p strong { color: var(--text); font-weight: 600; }
 
     .bio-quote {
@@ -403,43 +403,6 @@
       opacity: 0.9;
     }
 
-    /* Stats row */
-    .stats-row {
-      display: flex;
-      gap: 0;
-      margin-bottom: 60px;
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .stat {
-      flex: 1;
-      padding: 24px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      border-right: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .stat:last-child { border-right: none; }
-
-    .stat-val {
-      font-family: var(--font-display);
-      font-size: 36px;
-      letter-spacing: 0.05em;
-      line-height: 1;
-      color: #b81c0a;
-    }
-
-    .stat-lbl {
-      font-family: var(--font-ui);
-      font-size: 8px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
     /* Social links */
     .connect-eyebrow {
       font-family: var(--font-ui);
@@ -450,12 +413,7 @@
       margin-bottom: 18px;
     }
 
-    .social-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 48px;
-    }
+    .social-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 48px; }
 
     .soc-btn {
       display: inline-flex;
@@ -470,43 +428,66 @@
       font-size: 10px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      transition: border-color 0.2s, color 0.2s, background 0.2s, box-shadow 0.2s;
       background: rgba(184,28,10,0.03);
+      transition: border-color 0.2s, color 0.2s, background 0.2s, box-shadow 0.2s;
     }
 
-    .soc-btn:hover {
-      border-color: #b81c0a;
-      color: #b81c0a;
-      background: rgba(184,28,10,0.08);
-      box-shadow: 0 0 16px rgba(184,28,10,0.15);
-    }
-
+    .soc-btn:hover { border-color: #b81c0a; color: #b81c0a; background: rgba(184,28,10,0.08); box-shadow: 0 0 16px rgba(184,28,10,0.15); }
     .soc-btn svg { opacity: 0.6; transition: opacity 0.2s; flex-shrink: 0; }
     .soc-btn:hover svg { opacity: 1; }
 
-    /* Share button */
-    .share-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 26px;
-      border-radius: 3px;
-      background: #b81c0a;
-      border: none;
-      cursor: pointer;
-      color: #fff;
-      font-family: var(--font-ui);
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      box-shadow: 0 0 20px rgba(184,28,10,0.4);
-      margin-bottom: 60px;
-      transition: background 0.2s;
+    /* Tour section — city cards only, no dates or headings */
+    .tour-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 72px;
     }
 
-    .share-btn:hover { background: #8a1208; }
+    .tour-card {
+      border: 1px solid rgba(184,28,10,0.2);
+      border-radius: 4px;
+      padding: 24px 22px;
+      background: rgba(184,28,10,0.03);
+      transition: border-color 0.2s, background 0.2s, transform 0.25s, box-shadow 0.25s;
+    }
 
-    /* Share modal overlay */
+    .tour-card:hover {
+      border-color: rgba(184,28,10,0.5);
+      background: rgba(184,28,10,0.07);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(184,28,10,0.18);
+    }
+
+    .tour-city {
+      font-family: var(--font-display);
+      font-size: 32px;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .tour-book {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 3px;
+      border: 1px solid rgba(184,28,10,0.4);
+      color: #b81c0a;
+      font-family: var(--font-ui);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      width: fit-content;
+      transition: background 0.18s, box-shadow 0.18s;
+    }
+
+    .tour-book:hover { background: rgba(184,28,10,0.12); box-shadow: 0 0 12px rgba(184,28,10,0.2); }
+
+    /* Share modal overlay — .open class shows it */
     .share-modal-overlay {
       position: fixed;
       inset: 0;
@@ -521,10 +502,7 @@
       transition: opacity 0.25s;
     }
 
-    .share-modal-overlay.open {
-      opacity: 1;
-      pointer-events: all;
-    }
+    .share-modal-overlay.open { opacity: 1; pointer-events: all; }
 
     .share-modal {
       background: #0f0d10;
@@ -536,29 +514,10 @@
       position: relative;
     }
 
-    .share-modal-title {
-      font-family: var(--font-display);
-      font-size: 32px;
-      letter-spacing: 0.06em;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
+    .share-modal-title { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.06em; color: var(--text); margin-bottom: 6px; }
+    .share-modal-sub   { font-family: var(--font-ui); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: #b81c0a; margin-bottom: 24px; }
 
-    .share-modal-sub {
-      font-family: var(--font-ui);
-      font-size: 9px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: #b81c0a;
-      margin-bottom: 24px;
-    }
-
-    .share-options {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+    .share-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
 
     .share-option {
       display: flex;
@@ -580,17 +539,9 @@
       transition: border-color 0.18s, color 0.18s, background 0.18s;
     }
 
-    .share-option:hover {
-      border-color: #b81c0a;
-      color: #b81c0a;
-      background: rgba(184,28,10,0.07);
-    }
+    .share-option:hover { border-color: #b81c0a; color: #b81c0a; background: rgba(184,28,10,0.07); }
 
-    .share-link-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 4px;
-    }
+    .share-link-row { display: flex; gap: 8px; margin-top: 4px; }
 
     .share-link-input {
       flex: 1;
@@ -635,154 +586,25 @@
 
     .share-close:hover { color: #b81c0a; }
 
-    /* Tour section */
-    .tour-section   { margin-bottom: 72px; }
-
-    .tour-eyebrow {
-      font-family: var(--font-ui);
-      font-size: 9px;
-      letter-spacing: 0.34em;
-      text-transform: uppercase;
-      color: #b81c0a;
-      margin-bottom: 18px;
-    }
-
-    .tour-heading {
-      font-family: var(--font-display);
-      font-size: clamp(36px, 5vw, 60px);
-      letter-spacing: 0.05em;
-      line-height: 0.92;
-      background: linear-gradient(160deg, #c0c0c0 0%, #f8f8f8 15%, #888 28%, #e4e4e4 42%, #606060 55%, #f0f0f0 68%, #a0a0a0 80%, #fff 90%, #b0b0b0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 32px;
-    }
-
-    .tour-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 14px;
-    }
-
-    .tour-card {
-      border: 1px solid rgba(184,28,10,0.2);
-      border-radius: 4px;
-      padding: 20px 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      background: rgba(184,28,10,0.03);
-      transition: border-color 0.2s, background 0.2s, transform 0.25s, box-shadow 0.25s;
-    }
-
-    .tour-card:hover {
-      border-color: rgba(184,28,10,0.5);
-      background: rgba(184,28,10,0.07);
-      transform: translateY(-4px);
-      box-shadow: 0 8px 32px rgba(184,28,10,0.18);
-    }
-
-    .tour-date {
-      font-family: var(--font-ui);
-      font-size: 9px;
-      letter-spacing: 0.26em;
-      text-transform: uppercase;
-      color: #b81c0a;
-    }
-
-    .tour-city {
-      font-family: var(--font-display);
-      font-size: 28px;
-      letter-spacing: 0.04em;
-      color: var(--text);
-      line-height: 1;
-    }
-
-    .tour-venue {
-      font-family: var(--font-ui);
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-
-    .tour-book {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border-radius: 3px;
-      border: 1px solid rgba(184,28,10,0.4);
-      color: #b81c0a;
-      font-family: var(--font-ui);
-      font-size: 9px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      text-decoration: none;
-      width: fit-content;
-      transition: background 0.18s, box-shadow 0.18s;
-    }
-
-    .tour-book:hover {
-      background: rgba(184,28,10,0.12);
-      box-shadow: 0 0 12px rgba(184,28,10,0.2);
-    }
-
-    .tour-soldout {
-      font-family: var(--font-ui);
-      font-size: 9px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: rgba(242,237,232,0.25);
-      padding: 8px 0;
-    }
-
-    /* Footer */
-    .site-footer {
-      border-top: 1px solid rgba(255,255,255,0.04);
-      padding: 26px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .footer-txt {
-      font-family: var(--font-ui);
-      font-size: 9px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .footer-txt .red { color: #b81c0a; }
-
-    /* animations */
-    @keyframes fadeIn    { from { opacity: 0; }                       to { opacity: 1; } }
-    @keyframes slideUp   { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: translateY(0); } }
+    /* Cinematic entrance animations */
+    @keyframes fadeIn  { from { opacity: 0; }                              to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-28px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes titleReveal { from { opacity: 0; transform: translateY(20px); filter: blur(6px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
-    @keyframes btnPulse  { 0%,100% { box-shadow: 0 0 22px rgba(184,28,10,0.5); } 50% { box-shadow: 0 0 40px rgba(184,28,10,0.85); } }
+    @keyframes btnPulse { 0%,100% { box-shadow: 0 0 22px rgba(184,28,10,0.5); } 50% { box-shadow: 0 0 40px rgba(184,28,10,0.85); } }
 
-    body             { animation: fadeIn 1.2s ease forwards; }
-    #top-bar         { animation: slideDown 1s cubic-bezier(.4,0,.2,1) 0.3s both; }
-    #track-identity  { animation: slideUp  1s cubic-bezier(.4,0,.2,1) 0.6s both; }
-    #controls-panel  { animation: slideUp  0.9s cubic-bezier(.4,0,.2,1) 0.9s both; }
-    .track-title     { animation: titleReveal 1s cubic-bezier(.4,0,.2,1) 0.7s both; }
-    .artist-heading  { animation: titleReveal 1.2s cubic-bezier(.4,0,.2,1) 0.2s both; }
+    body            { animation: fadeIn 1.2s ease forwards; }
+    #top-bar        { animation: slideDown 1s cubic-bezier(.4,0,.2,1) 0.3s both; }
+    #track-identity { animation: slideUp  1s cubic-bezier(.4,0,.2,1) 0.6s both; }
+    #controls-panel { animation: slideUp  0.9s cubic-bezier(.4,0,.2,1) 0.9s both; }
+    .track-title    { animation: titleReveal 1s cubic-bezier(.4,0,.2,1) 0.7s both; }
+    .artist-heading { animation: titleReveal 1.2s cubic-bezier(.4,0,.2,1) 0.2s both; }
     #btn-play.playing { animation: btnPulse 2.5s ease-in-out infinite; }
 
-    /* Scroll reveal */
-    .reveal {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
+    /* Scroll reveal — .visible is added by JS when element enters viewport */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
-    /* Responsive */
     @media (max-width: 480px) {
       #top-bar        { padding: 16px 18px; }
       #track-identity { bottom: 138px; left: 18px; max-width: 72vw; }
@@ -790,20 +612,14 @@
       .track-title    { font-size: 38px; }
       #volume-bar     { width: 52px; }
       .artist-wrap    { padding: 52px 18px 52px; }
-      .stats-row      { flex-wrap: wrap; }
-      .stat           { min-width: 45%; }
     }
 
   </style>
 </head>
 <body>
 
-<!-- ── VIDEO HERO ──────────────────────────────────────────────
-     YouTube iframe fills the viewport as the main feature.
-     All other elements sit on top using position:absolute.
-     enablejsapi=1 lets JavaScript control the video - so can control it
-     autoplay=1 mute=1 — browsers require mute for autoplay - so video continues 
-─────────────────────────────────────────────────────────────── -->
+<!-- VIDEO SECTION — YouTube iframe fills the full viewport.
+     enablejsapi=1 lets JS control it. autoplay=1 mute=1 required for autoplay. -->
 <section id="video-section">
 
   <div id="yt-wrapper">
@@ -820,20 +636,18 @@
   <canvas id="particle-canvas"></canvas>
 
   <div id="top-bar">
-    <div>
-      <div class="wordmark">DJ DUSK</div>
-      <div class="wordmark-sub">Memory &mdash; The Music Video &middot; 2026</div>
-    </div>
+    <div class="wordmark">DJ DUSK</div>
+    <div class="wordmark-sub">Memory &mdash; The Music Video &middot; 2026</div>
   </div>
 
   <div id="track-identity">
     <p class="by-line">By DJ Dusk</p>
     <h1 class="track-title">Memory</h1>
     <span class="mood-pill">Techno</span>
-    <p class="track-desc">A visceral journey through pulsing electronic textures &mdash; raw club energy distilled into image and sound.</p>
+    <p class="track-desc">Memory — the music video. A visual artist video of DJ Dusk&rsquo;s song Memory that abstractly recalls some of her memories.</p>
   </div>
 
-  <!-- Controls: seek bar on top, then time / play / mute+volume+fullscreen -->
+  <!-- Controls: seek bar, then time / play / mute + volume + fullscreen -->
   <div id="controls-panel">
     <input id="seek-bar" type="range" min="0" max="100" value="0" aria-label="Seek" />
     <div class="ctrl-row">
@@ -864,10 +678,19 @@
 
     </div>
   </div>
+
+  <!-- Share button sits directly underneath the video -->
+  <div id="share-under-video">
+    <button id="btn-share-video">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Share This Video
+    </button>
+  </div>
+
 </section>
 
 
-<!-- ── ARTIST SECTION ─talking about the artist and who she is etc  -->
+<!-- ARTIST SECTION -->
 <section id="artist-section">
   <div class="red-divider"></div>
   <div class="artist-wrap">
@@ -889,56 +712,48 @@
       </div>
     </div>
 
-    <div class="stats-row reveal">
-      <div class="stat"><span class="stat-val">2026</span><span class="stat-lbl">Debut Release</span></div>
-      <div class="stat"><span class="stat-val">01</span><span class="stat-lbl">Music Video</span></div>
-      <div class="stat">
-        <span class="stat-val" style="font-size:22px;display:flex;align-items:center;gap:8px;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b81c0a" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Escaping
-        </span>
-        <span class="stat-lbl">Coming Soon &mdash; Music Video 02</span>
+    <!-- Connect section — Instagram, SoundCloud, Spotify, Booking only -->
+    <p class="connect-eyebrow reveal">Connect</p>
+    <div class="social-row reveal">
+      <a href="https://instagram.com"  target="_blank" rel="noopener" class="soc-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+        Instagram
+      </a>
+      <a href="https://soundcloud.com" target="_blank" rel="noopener" class="soc-btn">
+        <svg width="15" height="11" viewBox="0 0 30 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 14c0-2 1.5-3.5 3.5-3.5h.4C6.4 8 8.4 6 11 6c.5 0 1 .1 1.5.25C13.2 4 15 2.5 17.5 2.5c3.5 0 6.5 3 6.5 6.5 0 .3-.02.6-.05.85.5-.15.98-.2 1.55-.2 2.2 0 4 1.8 4 4s-1.8 4-4 4H5.5C3.5 17.7 2 16 2 14z"/></svg>
+        SoundCloud
+      </a>
+      <a href="https://open.spotify.com" target="_blank" rel="noopener" class="soc-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12.5c2.3-1 4.7-1 7 0M7 9c3-1.3 6-1.3 9 0M9 16c1.8-.7 3.8-.7 5.5 0"/></svg>
+        Spotify
+      </a>
+      <a href="mailto:bookingdjdusk.com" class="soc-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+        Booking Enquiries
+      </a>
+    </div>
+
+    <!-- Tour cities — no dates, no headings, just the four cities -->
+    <div class="tour-grid reveal">
+      <div class="tour-card">
+        <div class="tour-city">Melbourne</div>
+        <a href="mailto:bookingdjdusk.com" class="tour-book">Book Tickets</a>
       </div>
-      <div class="stat"><span class="stat-val">Live</span><span class="stat-lbl">On the Decks</span></div>
-    </div>
-
-    <p class="connect-eyebrow">Connect with DJ Dusk</p>
-    <div class="social-row">
-      <a href="https://instagram.com"   target="_blank" rel="noopener" class="soc-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>Instagram</a>
-      <a href="https://soundcloud.com"  target="_blank" rel="noopener" class="soc-btn"><svg width="15" height="11" viewBox="0 0 30 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 14c0-2 1.5-3.5 3.5-3.5h.4C6.4 8 8.4 6 11 6c.5 0 1 .1 1.5.25C13.2 4 15 2.5 17.5 2.5c3.5 0 6.5 3 6.5 6.5 0 .3-.02.6-.05.85.5-.15.98-.2 1.55-.2 2.2 0 4 1.8 4 4s-1.8 4-4 4H5.5C3.5 17.7 2 16 2 14z"/></svg>SoundCloud</a>
-      <a href="https://open.spotify.com" target="_blank" rel="noopener" class="soc-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12.5c2.3-1 4.7-1 7 0M7 9c3-1.3 6-1.3 9 0M9 16c1.8-.7 3.8-.7 5.5 0"/></svg>Spotify</a>
-      <a href="https://music.apple.com" target="_blank" rel="noopener" class="soc-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9 17V8l9-2v3"/><circle cx="6" cy="17" r="3"/><circle cx="18" cy="15" r="3"/></svg>Apple Music</a>
-      <a href="https://youtube.com"     target="_blank" rel="noopener" class="soc-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="3"/><polygon points="10 9 15 12 10 15 10 9" fill="currentColor" stroke="none"/></svg>YouTube</a>
-      <a href="mailto:info@djdusk.com"  class="soc-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>Email</a>
-    </div>
-
-    <button class="share-btn reveal" id="btn-share">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      Share This Video
-    </button>
-
-    <div class="tour-section reveal">
-      <p class="tour-eyebrow">On Tour</p>
-      <h3 class="tour-heading">SEE HER LIVE</h3>
-      <div class="tour-grid">
-        <div class="tour-card"><span class="tour-date">14 Jun 2026</span><div class="tour-city">London</div><div class="tour-venue">Fabric Nightclub &mdash; EC1A 9LH</div><a href="mailto:bookings@djdusk.com" class="tour-book">Book Tickets</a></div>
-        <div class="tour-card"><span class="tour-date">28 Jun 2026</span><div class="tour-city">Berlin</div><div class="tour-venue">Berghain &mdash; Am Wriezener Bahnhof</div><a href="mailto:bookings@djdusk.com" class="tour-book">Book Tickets</a></div>
-        <div class="tour-card"><span class="tour-date">12 Jul 2026</span><div class="tour-city">Amsterdam</div><div class="tour-venue">De School &mdash; Jan van Breemenstraat</div><span class="tour-soldout">&mdash; Sold Out</span></div>
-        <div class="tour-card"><span class="tour-date">19 Jul 2026</span><div class="tour-city">Melbourne</div><div class="tour-venue">Revolver Upstairs &mdash; Chapel St</div><a href="mailto:bookings@djdusk.com" class="tour-book">Book Tickets</a></div>
-        <div class="tour-card"><span class="tour-date">02 Aug 2026</span><div class="tour-city">Tokyo</div><div class="tour-venue">WOMB &mdash; Maruyamacho, Shibuya</div><a href="mailto:bookings@djdusk.com" class="tour-book">Book Tickets</a></div>
-        <div class="tour-card"><span class="tour-date">23 Aug 2026</span><div class="tour-city">New York</div><div class="tour-venue">Output Brooklyn &mdash; Wythe Ave</div><a href="mailto:bookings@djdusk.com" class="tour-book">Book Tickets</a></div>
+      <div class="tour-card">
+        <div class="tour-city">London</div>
+        <a href="mailto:bookingdjdusk.com" class="tour-book">Book Tickets</a>
+      </div>
+      <div class="tour-card">
+        <div class="tour-city">Amsterdam</div>
+        <a href="mailto:bookingdjdusk.com" class="tour-book">Book Tickets</a>
+      </div>
+      <div class="tour-card">
+        <div class="tour-city">Tokyo</div>
+        <a href="mailto:bookingdjdusk.com" class="tour-book">Book Tickets</a>
       </div>
     </div>
-
-    <p style="font-family:var(--font-ui);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:72px;">
-      Booking enquiries &mdash; <a href="mailto:bookings@djdusk.com" style="color:#b81c0a;text-decoration:none;">bookings@djdusk.com</a>
-    </p>
 
   </div>
-  <footer class="site-footer">
-    <span class="footer-txt">&copy; 2026 <span class="red">DJ Dusk</span></span>
-    <span class="footer-txt">Memory &mdash; The Music Video</span>
-  </footer>
 </section>
 
 
@@ -951,9 +766,14 @@
     <div class="share-modal-title">SHARE</div>
     <div class="share-modal-sub">Memory &mdash; DJ Dusk</div>
     <div class="share-options">
-      <a href="https://twitter.com/intent/tweet?text=Check%20out%20Memory%20by%20DJ%20Dusk&url=https%3A%2F%2Fyoutu.be%2FrlaNkVwQXYI" target="_blank" rel="noopener" class="share-option"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.727-8.843L1.254 2.25H8.08l4.261 5.636zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>Share on X (Twitter)</a>
-      <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fyoutu.be%2FrlaNkVwQXYI" target="_blank" rel="noopener" class="share-option"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>Share on Facebook</a>
-      <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="share-option"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>Share on Instagram</a>
+      <a href="https://twitter.com/intent/tweet?text=Check%20out%20Memory%20by%20DJ%20Dusk&url=https%3A%2F%2Fyoutu.be%2FrlaNkVwQXYI" target="_blank" rel="noopener" class="share-option">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.727-8.843L1.254 2.25H8.08l4.261 5.636zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        Share on X
+      </a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fyoutu.be%2FrlaNkVwQXYI" target="_blank" rel="noopener" class="share-option">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        Share on Facebook
+      </a>
     </div>
     <p style="font-family:var(--font-ui);font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Copy Link</p>
     <div class="share-link-row">
@@ -966,25 +786,27 @@
 
 <script>
   /*
+    ============================================================
     DJ DUSK — JavaScript
-    Controls all interactive features on the page.
+    Controls all interactive features.
+
     Class concepts used:
-    - document.getElementById()   selecting elements
-    - element.onpointerdown       button click events
-    - addEventListener()          slider input events
-    - classList.add/remove        toggling CSS classes
-    - style.display               showing and hiding icons
-    - textContent                 updating text on screen
+    - document.getElementById()  selecting elements
+    - element.onpointerdown      button click events
+    - addEventListener()         slider and resize events
+    - classList.add / remove     toggling CSS classes
+    - style.display              showing and hiding icons
+    - textContent                updating time labels
     - createElement + appendChild loading the YouTube API
+    ============================================================
   */
 
-  /* State — tracks what is currently happening */
+  /* State variables — track what is happening right now */
   let isPlaying = false;
   let isMuted   = true;
   let ytPlayer  = null;
 
-
-  /* Select all elements we need — getElementById finds each one by its id */
+  /* Select all elements we need using getElementById */
   const btnPlay    = document.getElementById('btn-play');
   const btnMute    = document.getElementById('btn-mute');
   const btnFS      = document.getElementById('btn-fullscreen');
@@ -1000,19 +822,18 @@
   const ctx        = canvas.getContext('2d');
   const toastEl    = document.getElementById('toast');
 
-
-  /* load youtube video 
+  /* Load YouTube IFrame API using createElement and appendChild */
   const tag = document.createElement('script');
   tag.src   = 'https://www.youtube.com/iframe_api';
   document.head.appendChild(tag);
 
-
-  /* Javascript control YouTube video */
+  /* YouTube calls this when the API is ready */
   window.onYouTubeIframeAPIReady = function () {
     ytPlayer = new YT.Player('yt-player', {
       events: {
 
         'onReady': function (e) {
+          /* Start muted — browsers block autoplay with sound */
           e.target.mute();
           e.target.setVolume(80);
           e.target.playVideo();
@@ -1025,7 +846,7 @@
           btnPlay.classList.add('playing');
           showToast('Playing muted — click the speaker to unmute');
 
-          /* Update seek bar and time display every 500ms */
+          /* Update seek bar and time labels every 500ms */
           setInterval(function () {
             try {
               const dur = e.target.getDuration();
@@ -1054,11 +875,9 @@
     });
   };
 
-
-  /* Play / Pause button — onpointerdown works for mouse */
+  /* Play / Pause — onpointerdown works for mouse, touch and stylus */
   btnPlay.onpointerdown = function () {
     if (!ytPlayer) { showToast('Player loading...'); return; }
-
     if (isPlaying) {
       ytPlayer.pauseVideo();
       isPlaying = false;
@@ -1076,8 +895,7 @@
     }
   };
 
-
-  /* Mute button  */
+  /* Mute — flips isMuted boolean, swaps the speaker icon */
   btnMute.onpointerdown = function () {
     if (!ytPlayer) return;
     isMuted = !isMuted;
@@ -1095,8 +913,7 @@
     }
   };
 
-
-  /* Volume slider  */
+  /* Volume slider — addEventListener fires while dragging */
   volBar.addEventListener('input', function () {
     if (!ytPlayer) return;
     const vol = Math.round(parseFloat(volBar.value) * 100);
@@ -1110,9 +927,7 @@
     fillBar(volBar, parseFloat(volBar.value), 1);
   });
 
-
-  /* Seek bar — jumps the video to whatever point the user drags to - so people can 
-  have more freerange when using the music video */
+  /* Seek bar — jumps video to the dragged position */
   seekBar.addEventListener('input', function () {
     if (!ytPlayer) return;
     const dur = ytPlayer.getDuration();
@@ -1122,8 +937,7 @@
     }
   });
 
-
-  /* Fullscreen button */
+  /* Fullscreen — browser built-in Fullscreen API */
   btnFS.onpointerdown = function () {
     const section = document.getElementById('video-section');
     if (!document.fullscreenElement) {
@@ -1133,14 +947,14 @@
     }
   };
 
-
-  /* fillBar — colours the left portion of a range slider red */
+  /* fillBar — colours the left side of a range slider red */
   function fillBar(el, val, max) {
     const pct = (val / max) * 100;
     el.style.background =
       'linear-gradient(to right, #b81c0a ' + pct + '%, rgba(242,237,232,0.15) ' + pct + '%)';
   }
 
+  /* fmt — converts seconds to "M:SS" e.g. 95 becomes "1:35" */
   function fmt(seconds) {
     if (!seconds || isNaN(seconds)) return '0:00';
     const m = Math.floor(seconds / 60);
@@ -1148,29 +962,23 @@
     return m + ':' + s;
   }
 
-
-  /* showToast — briefly shows a message at the bottom of the screen.
+  /* showToast — briefly shows a message.
      classList.add triggers the CSS fade-in, classList.remove fades it out. */
   let toastTimer = null;
-
   function showToast(msg) {
     toastEl.textContent = msg;
     toastEl.classList.add('show');
     if (toastTimer) clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () {
-      toastEl.classList.remove('show');
-    }, 2500);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2500);
   }
 
-
-  /* Share button */
-  const btnShare     = document.getElementById('btn-share');
+  /* Share buttons — classList.add/remove opens and closes the modal */
   const shareOverlay = document.getElementById('share-overlay');
   const shareClose   = document.getElementById('share-close-btn');
   const shareCopyBtn = document.getElementById('share-copy-btn');
   const shareLinkInp = document.getElementById('share-link-input');
 
-  btnShare.onpointerdown = function () {
+  document.getElementById('btn-share-video').onpointerdown = function () {
     shareOverlay.classList.add('open');
   };
 
@@ -1179,9 +987,7 @@
   };
 
   shareOverlay.addEventListener('pointerdown', function (e) {
-    if (e.target === shareOverlay) {
-      shareOverlay.classList.remove('open');
-    }
+    if (e.target === shareOverlay) shareOverlay.classList.remove('open');
   });
 
   shareCopyBtn.onpointerdown = function () {
@@ -1194,9 +1000,8 @@
       .catch(function () { showToast('Copy failed'); });
   };
 
-
-  /* red dots float upward for atmosphere
-     requestAnimationFrame redraws them */
+  /* Canvas particles — 55 red dots drift upward for atmosphere.
+     requestAnimationFrame redraws them 60 times per second. */
   const particleCfg = { count: 55, speed: 0.5, size: 1.6, drift: 0.4 };
   let   particles   = [];
 
@@ -1225,7 +1030,6 @@
   function animateParticles() {
     requestAnimationFrame(animateParticles);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     particles.forEach(function (p) {
       p.x += p.vx + (Math.random() - 0.5) * particleCfg.drift;
       p.y += p.vy;
@@ -1239,26 +1043,21 @@
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       ctx.fill();
     });
-
     ctx.globalAlpha = 1;
   }
 
   animateParticles();
 
-
-  /* Scroll reveal — adds .visible to .reveal elements as they enter the viewport */
+  /* Scroll reveal — adds .visible when element enters the viewport */
   document.querySelectorAll('.reveal').forEach(function (el) {
     new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
+        if (entry.isIntersecting) entry.target.classList.add('visible');
       });
     }, { threshold: 0.12 }).observe(el);
   });
 
-
-  /* red fills on sliders */
+  /* Set initial red fills on both sliders */
   fillBar(volBar,  parseFloat(volBar.value), 1);
   fillBar(seekBar, 0, 100);
 
